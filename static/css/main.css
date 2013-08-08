@@ -1,0 +1,251 @@
+.navbar-static-top {
+    padding-bottom: 15px;
+}
+
+.course-box {
+    padding: 8px 14px 8px 14px;
+    margin: 0;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    background-color: #ddd;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    width: 72px;
+    text-align: center;
+    display: inline-block;
+    position: relative;
+}
+
+.course-box:hover {
+	background-color: #eee;
+}
+
+.course-box-parent {
+	padding: 0 0 5px 0;
+    margin: 0;
+	display: inline-block;
+    width: 100px;
+    height: 38px;
+    cursor: hand;
+    cursor: pointer;
+}
+
+.highlighted {
+    background-color: #bfb;
+    font-weight: bold;
+}
+
+#class-tree-parent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+
+    width: 100%;
+}
+
+#class-tree {
+    position: relative;
+    width: 700px; /* remember to account for padding & borders */
+
+    display: table;
+}
+
+#class-tree-row {
+    display: table-row;
+}
+
+#class-tree-left, #class-tree-mid, #class-tree-right {
+    width: 100px;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    display: table-cell;
+}
+
+#class-tree-mid {
+    padding-left: 200px;
+    padding-right: 200px;
+    margin: 0;
+}
+
+#content-parent {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    /*width: 706px;*/
+    width: 100%;
+    /*height: 10000px;*/
+}
+
+#course-details-box {
+    border: 1px solid;
+    width: 200px;
+    padding: 5px;
+    position: absolute;
+    left: 100;
+    top: 100;
+    background-color: #fff;
+    display: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+}
+
+#activity-indicator {
+    position: absolute;
+    display: none;
+    background-image: url("../img/loading.gif");
+    background-size: 16px 16px;
+    width: 16px;
+    height: 16px;
+    z-index: 10;
+    padding: 0;
+    margin: 0;
+}
+
+#course-details-header {
+    font-weight: bold;
+}
+
+.affirmative {
+    color: #008000;
+    font-weight: bold;
+}
+
+.negative {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+#canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    z-index: -10;
+}
+
+#course-selector, #course-selector2 {
+    width: 550px;
+}
+
+#pathways-content {
+    display: none; /* hidden by default */
+}
+
+#error-message-container {
+    display: none;
+}
+
+#activity-overlay {
+    /*display: none;*/
+    position: fixed;
+    z-index: 9001;
+    top: 0;
+    left: 0;
+    /*right: 0;
+    bottom: 0;*/
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    /*background-color: rgba(0, 0, 0, 0.5);*/
+}
+
+#activity-overlay-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 64px;
+    height: 64px;
+    padding-top: -32px;
+    padding-left: -32px;
+    margin: 0;
+    background: url("../img/loading-large.gif") no-repeat;
+    background-size: 64px 64px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+}
+
+#gened-selector {
+    width: 600px;
+    margin: 10px;
+}
+
+#gened-dropdown {
+    height: 500px;
+    overflow: auto;
+}
+
+td.timetable-header {
+    font-weight: bold;
+    text-align: center;
+    width: 170px;
+}
+
+td.timetable-header-side {
+    /*width: 50px;*/
+}
+
+td.timetable-side {
+    font-weight: bold;
+}
+
+td.timetable-cell {
+    text-align: center;
+    vertical-align: middle;
+    color: #fff;
+    font-weight: bold;
+}
+
+td.timetable-cell .codes {
+    font-size: 9pt;
+    font-weight: normal;
+}
+
+td.timetable-cell.colour1 {
+    background-color: #5099CC;
+}
+
+td.timetable-cell.colour2 {
+    background-color: #9950CC;
+}
+
+td.timetable-cell.colour3 {
+    background-color: #509988;
+}
+
+td.timetable-cell.colour4 {
+    background-color: #DDAA60;
+}
+
+td.timetable-cell.colour5 {
+    background-color: #3366CC;
+}
+
+td.timetable-cell.colour6 {
+    background-color: #409944;
+}
+
+td.timetable-cell.colour7 {
+    background-color: #ff0000;
+}
+
+a.timetable-tooltip {
+    color: #fff;
+}
+
+.timetable-disclaimer {
+    font-size: 9pt;
+    font-style: italic;
+}
+
+.footer {
+    text-align: left;
+}
+
+.timetable-footer {
+    padding-bottom: 50px;
+}

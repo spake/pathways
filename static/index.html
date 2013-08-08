@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!-- the source is horrible, please don't judge me -->
+<html>
+    <head>
+        <title>Pathways</title>
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/css/main.css" rel="stylesheet">
+
+        <link href="/static/img/favicon.png" rel="shortcut icon">
+
+        <script src="/static/js/jquery.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/js/moment.min.js"></script>
+        <script src="/static/js/main.js"></script>
+    </head>
+    <body>
+
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="nav-collapse">
+                        <a class="brand" href="#">Pathways</a>
+                    
+                        <form class="nav navbar-form" action="" onsubmit="return false">
+                            <input type="text" class="search-query" placeholder="Search" data-provide="typeahead" autocomplete="off" id="course-selector2"/>
+                        </form>
+
+                        <ul class="nav pull-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">General Education Courses <b class="caret"></b></a>
+                                <ul id="gened-dropdown" class="dropdown-menu" role="menu">
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div id="error-message-container" class="alert">
+                <button type="button" class="close" onclick="$('#error-message-container').fadeOut();">&times;</button>
+                <span id="error-message"></span>
+            </div>
+        </div>
+
+        <div class="container" id="pathways-welcome">
+            <div class="hero-unit">
+                <h1>Pathways</h1>
+                <p>
+                    Type a course name or code into the search box above to get started.
+                </p>
+            </div>
+
+            <hr/>
+            <footer class="footer">
+                Designed and built by <a href="http://www.caley.com.au">George Caley</a> with information sourced from the UNSW <a href="http://www.handbook.unsw.edu.au">Handbook</a> and <a href="http://www.timetable.unsw.edu.au">Class Timetable</a>.<br/>
+                Some timetable code stolen from Oliver Chang's <a href="https://github.com/oliver-c/octangles/">Octangles</a>.<br/>
+                I'm fairly sure there's a ton of bugs in here, and there's also a fair chance that some of the data might be a tad inaccurate; <a href="mailto:george@caley.com.au">let me know</a> if anything particularly nasty comes up.
+            </footer>
+        </div>
+
+        <div class="container" id="pathways-content">
+
+            <div id="course-details">
+                <p id="course-details-header-parent"><span id="course-details-header"></span> (<span id="course-details-uoc"></span> UoC) (<a id="course-details-header-outline" href="" target="_blank">Course outline</a>, <a id="course-details-header-handbook" href="" target="_blank">Handbook</a>, <a id="course-details-header-timetable" href="" target="_blank">Timetable</a>, <a id="course-details-header-google" href="" target="_blank">Google</a>)</p>
+                <p id="course-details-description"></p>
+                <p id="course-details-prerequisites-parent"><b>Prerequisites:</b> <span id="course-details-prerequisites"></span></p>
+                <p id="course-details-corequisites-parent"><b>Corequisites:</b> <span id="course-details-corequisites"></span></p>
+                <p id="course-details-exclusions-parent"><b>Exclusions:</b> <span id="course-details-exclusions"></span></p>
+                <p>
+                    <b>13s1:</b> <span id="course-details-s1"></span>
+                    <button type="button" id="course-details-s1-button" class="btn btn-small" data-toggle="collapse" data-target="#course-details-timetable-s1">
+                        Timetable <span class="caret"></span>
+                    </button>
+                    <div id="course-details-timetable-s1" class="collapse"></div>
+                </p>
+                <p>
+                    <b>13s2:</b> <span id="course-details-s2"></span>
+                    <button type="button" id="course-details-s2-button" class="btn btn-small" data-toggle="collapse" data-target="#course-details-timetable-s2">
+                        Timetable <span class="caret"></span>
+                    </button>
+                    <div id="course-details-timetable-s2" class="collapse"></div>
+                </p>
+                <p><b>Available for general education:</b> <span id="course-details-gened"></span></p>
+            </div>
+
+            <hr/>
+
+            <center>
+            <div id="content-parent">
+                <div id="class-tree-parent">
+                    <div id="class-tree">
+                        <div id="class-tree-row">
+                            <div id="class-tree-left"></div>
+                            <div id="class-tree-mid"></div>
+                            <div id="class-tree-right"></div>
+                        </div>
+
+                        <canvas id="canvas" width="1000" height="1000"></canvas>
+                    </div>
+
+                    <hr/>
+
+                    <footer class="footer timetable-footer">
+                        Orange arrows indicate corequisites.
+                    </footer>
+                </div>
+
+                
+            </div>
+            </center>
+            
+        </div>
+
+        <div id="course-details-box"></div>
+        <div id="activity-overlay">
+            <div id="activity-overlay-content"></div>
+        </div>
+    </body>
+</html>
