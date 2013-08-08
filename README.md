@@ -1,7 +1,7 @@
 Pathways, the UNSW course handbook done right
 ---------------------------------------------
 
-Pathways is a web app that lets you view details about UNSW courses, including timetables, prerequisites and course summaries, in a friendlier manner than the [course handbook](http://www.handbook.unsw.edu.au) and [timetable](http://www.timetable.unsw.edu.au) sites. It still has a long way to go in terms of cleaning up the code and adding in a few more features (I will probably end up rewriting significant chunks of it in the near future), but I've been pressured (*cough* Goldy *cough*) to release the source, so here it is in all its unpolished glory. The 'official' instance is currently run from my CSE account [here](http://cgi.cse.unsw.edu.au/~gric057/pathways/).
+Pathways is a web app that lets you view details about UNSW courses, including timetables, prerequisites and course summaries, in a friendlier manner than the [course handbook](http://www.handbook.unsw.edu.au) and [timetable](http://www.timetable.unsw.edu.au) sites. It still has a long way to go in terms of cleaning up the code and adding in a few more features (I will probably end up rewriting significant chunks of it in the near future), but I've been pressured (\*cough\* Goldy \*cough\*) to release the source, so here it is in all its unpolished glory. The 'official' instance is currently run from my CSE account [here](http://cgi.cse.unsw.edu.au/~gric057/pathways/).
 
 In its current state, Pathways has several components:
 
