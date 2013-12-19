@@ -17,3 +17,5 @@ A word of warning for those who actually want to start up their own instances: y
 I'll leave the rest of its inner workings for you to figure out (in case I haven't repeated it enough, _it's unpolished_, don't judge me!), so if you have any questions/comments/threats, feel free to contact me on the email I've listed on GitHub or try and hunt me down at the CSE weekly BBQ.
 
 Pathways is made available under the Apache License 2.0. Portions of the timetable display code are based on [Octangles](https://github.com/oliver-c/octangles).
+
+BTW it's unpolished.
