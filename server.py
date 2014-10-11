@@ -34,7 +34,7 @@ TIMETABLE_DIR = "timetable"
 TIMETABLE_REQUEST_TIMEOUT = 10 # seconds
 TIMETABLE_CACHE_TIME = 60*60*6 # 6 hours
 
-CURRENT_YEAR = "2013"
+CURRENT_YEAR = "2015"
 
 def connect_db():
     return sqlite3.connect(DATABASE_FILENAME)
@@ -77,6 +77,11 @@ def fetch_timetable_course(code):
     except urllib2.URLError as e:
         print "Timeout/other error!"
         raise e
+
+    if not data:
+        print "Timetable is empty!"
+        print "http://www.timetable.unsw.edu.au/%s/%s.html" % (CURRENT_YEAR, code)
+        
     return data
 
 # returns a tuple of (timetable_data, time)
@@ -270,6 +275,10 @@ def tree(code):
             details["type"] = type
             below.append(details)
 
+    # sort things nicely
+    above.sort(key=lambda node: node["code"])
+    below.sort(key=lambda node: node["code"])
+
     return json.dumps({"centre": centre, "above": above, "below": below, "error": False})
 
 @app.route("/all-courses")
@@ -286,7 +295,7 @@ def all_courses():
     return json.dumps(courses)
 
 @app.route("/all-courses-names")
-def all_courses():
+def all_courses_names():
     cur = g.db.cursor()
 
     courses = list()
@@ -299,7 +308,7 @@ def all_courses():
     return json.dumps(courses)
 
 @app.route("/all-courses-reverse")
-def all_courses():
+def all_courses_reverse():
     cur = g.db.cursor()
 
     courses = dict()
@@ -330,4 +339,4 @@ def static_from_root():
     return send_from_directory(app.static_folder, "index.html")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=7001)
