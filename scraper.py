@@ -24,7 +24,7 @@ COURSES_DIR = "courses"
 UG = "undergraduate"
 PG = "postgraduate"
 
-CURRENT_YEAR = "2015"
+CURRENT_YEAR = "2017"
 
 COURSE_LIST_RE = re.compile(r'<TD class="(?:evenTableCell)?" align="left">([A-Z]{4}[0-9]{4})</TD>')
 

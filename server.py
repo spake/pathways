@@ -34,7 +34,7 @@ TIMETABLE_DIR = "timetable"
 TIMETABLE_REQUEST_TIMEOUT = 10 # seconds
 TIMETABLE_CACHE_TIME = 60*60*6 # 6 hours
 
-CURRENT_YEAR = "2015"
+CURRENT_YEAR = "2017"
 
 def connect_db():
     return sqlite3.connect(DATABASE_FILENAME)
