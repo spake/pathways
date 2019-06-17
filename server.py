@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 
 '''
    Copyright 2013 George Caley
@@ -16,73 +16,55 @@
    limitations under the License.
 '''
 
+import datetime, json, os, re, sqlite3, time, requests
+import urllib.request,  urllib.parse
+from urllib.error import HTTPError
 from bs4 import BeautifulSoup
-import datetime
 from flask import Flask, request, send_from_directory, g
-import json
-import os
-import re
-import sqlite3
-import time
-import urllib2
 
 DATABASE_FILENAME = "courses.db"
 LOG_FILENAME = "pathways.log"
-
-TIMETABLE_DIR = "timetable"
-
+TIMETABLE_DIR = "courses"
 TIMETABLE_REQUEST_TIMEOUT = 10 # seconds
 TIMETABLE_CACHE_TIME = 60*60*6 # 6 hours
 
-CURRENT_YEAR = "2017"
+CURRENT_YEAR = "2018"
 
 def connect_db():
     return sqlite3.connect(DATABASE_FILENAME)
 
 # logs the current flask request
 def log_request():
-    f = open(LOG_FILENAME, "a")
-
     url = request.url
     user_agent = request.user_agent
     remote_addr = request.remote_addr
     now = datetime.datetime.now()
-
-    values = [now, remote_addr, user_agent, url]
-    values = map(str, values)
+    values = {
+        "now": now,
+        "remote_addr": remote_addr,
+        "user_agent": user_agent,
+        "url": url
+    }
     values = "\t".join(values)
-
-    f.write(values+"\n")
-    f.close()
-
-# stupid function for cgi replacement stuff
-def dummy_print():
-    pass
+    with open(LOG_FILENAME, "a") as f:
+        f.write(values + "\n")
 
 # fetches the timetable file for the given course
 # returns the HTML data if successful, empty string if HTTP 404 (to prevent retries),
 # None if any other HTTP error (likely their site is broken, or connection problems)
+'''
+    Need to verify this request gives the HTML lol
+'''
 def fetch_timetable_course(code):
-    print "Fetching fresh timetable for", code
+    print("Fetching fresh timetable for " + str(code))
     try:
-        u = urllib2.urlopen("http://www.timetable.unsw.edu.au/%s/%s.html" % (CURRENT_YEAR, code), timeout=TIMETABLE_REQUEST_TIMEOUT)
-        data = u.read()
-    except urllib2.HTTPError as e:
-        if e.code == 404:
-            print "Got 404"
-            data = ""
-        else:
-            print "Misc error:", e.code
-            data = None
-    except urllib2.URLError as e:
-        print "Timeout/other error!"
-        raise e
-
-    if not data:
-        print "Timetable is empty!"
-        print "http://www.timetable.unsw.edu.au/%s/%s.html" % (CURRENT_YEAR, code)
-        
-    return data
+        resp = requests.get("http://www.timetable.unsw.edu.au/" + CURRENT_YEAR + "/" + str(code) + ".html").text
+        return resp
+    except HTTPError as http_err:
+        print("HTTP Error encountered " + str(http_err))
+    except Exception as err:
+        print("Other Error encountered " + str(err)) 
+    return None
 
 # returns a tuple of (timetable_data, time)
 # where timetable_data is the HTML data for the timetable file,
@@ -97,19 +79,21 @@ def get_timetable_course_data(code):
         if time.time() - mtime <= TIMETABLE_CACHE_TIME:
             return (open(filename, "r").read(), mtime)
         else:
-            print "Timetable for", code, "is too old"
+            print("Timetable for " + code + " is too old")
     else:
-        print "Timetable for", code, "doesn't exist"
+        print("Timetable for " + code + " doesn't exist")
 
     data = fetch_timetable_course(code)
     if data is not None:
-        f = open(filename, "w")
-        f.write(data)
-        f.close()
-
+        with open(filename, "w") as f:
+            f.write(data)
     return (data, time.time())
 
 # does what it says on the tin
+'''
+  This could be done as a global var or even just a list and get the index of a value
+  Will convert eventually
+'''
 def day_to_index(day):
     indexes = {
         "Mon": 0,
@@ -149,12 +133,12 @@ def get_timetable_course_schedule(code):
     for period in soup.find_all("td", {"class": "sectionSubHeading"}):
         data = period.parent.parent.next_sibling#.next_sibling
         for row in data.find_all("tr", {"class": re.compile("row(High|Low)light")}):
-            info = map(lambda node: node.text, row.find_all("td", {"class": "data"}))
+            info = [node.text for node in row.find_all("td", {"class": "data"})]
 
             name = info[0]
             
             status = info[4] # Open, Full, On Hold
-            size, capacity = map(int, re.match(r"(\d+)/(\d+)", info[5]).groups())
+            size, capacity = list(map(int, re.match(r"(\d+)/(\d+)", info[5]).groups()))
             period = info[1]
             code = info[3]
             classCode = info[2]
@@ -178,8 +162,8 @@ def get_timetable_course_schedule(code):
                 day = match.group(1)
 
                 if start_minute != 0 or finish_minute != 0:
-                    print "wtf"
-                    print info
+                    print("wtf")
+                    print(info)
 
                 # add thing
                 day_index = day_to_index(day)
@@ -217,7 +201,7 @@ def get_course_details(code, detailed=False):
     else:
         # create tuples
         d = {}
-        for i in xrange(len(cols)):
+        for i in range(len(cols)):
             d[cols[i]] = result[i]
         d["exists"] = True
 
@@ -260,7 +244,7 @@ def tree(code):
     try:
         centre = get_course_details(code, detailed=True)
     except Exception as e:
-        print e
+        print(e)
         return json.dumps({"error": True})
 
     for above_code, type in cur.execute("SELECT source, type FROM relationships WHERE destination = ?", (code,)).fetchall():
@@ -284,11 +268,8 @@ def tree(code):
 @app.route("/all-courses")
 def all_courses():
     cur = g.db.cursor()
-
-    courses = list()
-
+    courses = []
     result = cur.execute("SELECT code, name FROM courses ORDER BY code ASC")
-
     for code, name in result:
         courses.append({"label": name + " - " + code, "value": code})
 
@@ -297,41 +278,29 @@ def all_courses():
 @app.route("/all-courses-names")
 def all_courses_names():
     cur = g.db.cursor()
-
-    courses = list()
-
+    courses = []
     result = cur.execute("SELECT code, name FROM courses ORDER BY code ASC")
-
     for code, name in result:
         courses.append(name + " - " + code)
-
     return json.dumps(courses)
 
 @app.route("/all-courses-reverse")
 def all_courses_reverse():
     cur = g.db.cursor()
-
-    courses = dict()
-
+    courses = {}
     result = cur.execute("SELECT code, name FROM courses ORDER BY code ASC")
-
     for code, name in result:
         key = name + " - " + code
         courses[key] = code
-
     return json.dumps(courses)
 
 @app.route("/all-gened")
 def all_gened():
     cur = g.db.cursor()
-
-    courses = list()
-
+    courses = []
     result = cur.execute("SELECT code, name FROM courses WHERE gened = 1 ORDER BY code ASC")
-
     for code, name in result:
         courses.append({"label": name + " - " + code, "value": code})
-
     return json.dumps(courses)
 
 @app.route("/")

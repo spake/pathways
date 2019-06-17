@@ -14,85 +14,61 @@
    limitations under the License.
 '''
 
-import urllib2
-import re
-import sys
-import os
+import os, re, requests, sys
+from requests.exceptions import HTTPError
 
 COURSES_DIR = "courses"
-
 UG = "undergraduate"
 PG = "postgraduate"
-
-CURRENT_YEAR = "2017"
-
+CURRENT_YEAR = "2018"
 COURSE_LIST_RE = re.compile(r'<TD class="(?:evenTableCell)?" align="left">([A-Z]{4}[0-9]{4})</TD>')
 
 def scrape_list(url):
-    print "Fetching page data"
-    data = urllib2.urlopen(url).read()
-    print
-
-    # find courses
-    print "Finding course codes"
-    codes = re.findall(COURSE_LIST_RE, data)
-
-    print "Done"
-    print
-    return codes
+    
+    print("Fetching page data")
+    try:
+        data = requests.get(url).text
+        print("Finding course codes")
+        codes = re.findall(COURSE_LIST_RE, data)
+        print("Done")
+        return codes
+    except HTTPError as http_err:
+        print("HTTP error")
+    except Exception as err:
+        print(err)
+    return None
 
 def scrape_area(area, level=UG):
-    print "Finding all courses for %s" % area
-    return scrape_list("https://www.handbook.unsw.edu.au/vbook%s/brCoursesBySubjectArea.jsp?studyArea=%s&StudyLevel=%s" % (CURRENT_YEAR, area, level))
+    print("Finding all courses for " + str(area))
+    return scrape_list("http://legacy.handbook.unsw.edu.au/vbook" + CURRENT_YEAR + "/brCoursesBySubjectArea.jsp?studyArea=" + str(area) + "&StudyLevel=" + str(level))
 
-def scrape_everything(level=UG):
-    url = "http://www.handbook.unsw.edu.au/vbook%s/brCoursesBySubjectArea.jsp?StudyLevel=%s&descr=A" % (CURRENT_YEAR, level)
-    print "Reading area list"
-    data = urllib2.urlopen(url).read()
-    codes = re.findall(r">([A-Z]{4}): .*?</A></TD>", data)
-    print codes
+def scrape_everything(level):
+    url = "http://legacy.handbook.unsw.edu.au/vbook%s/brCoursesBySubjectArea.jsp?StudyLevel=%s&descr=A" % (CURRENT_YEAR, level)
+    print("Reading area list")
+    data = requests.get(url).text
+    codes = re.findall(r'>([A-Z]{4}): .*?</A></TD>', data)
+    print(codes)
     for code in codes:
         for course in scrape_area(code, level):
             scrape(course, level)
 
 def scrape(course, level=UG):
-    url = "http://www.handbook.unsw.edu.au/%s/courses/%s/%s.html" % (level, CURRENT_YEAR, course)
+    url = "http://legacy.handbook.unsw.edu.au/%s/courses/%s/%s.html" % (level, CURRENT_YEAR, course)
     filename = "%s/%s.html" % (COURSES_DIR, course)
     if os.path.exists(filename):
-        print "Skipping", course
+        print("Skipping " + course)
         return
-
-    #print "Fetching page data for %s" % course
-    print "Fetching", course
+    print("Fetching " + course)
     try:
-        data = urllib2.urlopen(url).read()
+        data = requests.get(url).text
     except Exception as e:
-        print "FAILED:", e.message
+        print("FAILED: " + e.message)
         return
-
-    #print "Writing to %s" % filename
-    try:
-        f = open(filename, "w")
+    with open(filename, "w") as f:
         f.write(data)
-        f.close()
-    except Exception as e:
-        print "FAILED:", e.message
-        return
-
-    #print "Done"
-    #print
 
 if __name__ == "__main__":
     if not os.path.exists(COURSES_DIR):
         os.mkdir(COURSES_DIR)
-
-    scrape_everything(level=UG)
-    scrape_everything(level=PG)
-    """quit()
-    if len(sys.argv) == 2:
-        codes = scrape_area(sys.argv[1])
-        for code in codes:
-            scrape(code)
-        print "Whoop, finished!"
-    else:
-        print "usage: %s <area>" % sys.argv[0]"""
+    scrape_everything(UG)
+    scrape_everything(PG)
